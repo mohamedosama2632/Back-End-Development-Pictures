@@ -35,7 +35,9 @@ def count():
 ######################################################################
 @app.route("/picture", methods=["GET"])
 def get_pictures():
-    pass
+    return jsonify(data), 200
+    
+
 
 ######################################################################
 # GET A PICTURE
@@ -44,7 +46,10 @@ def get_pictures():
 
 @app.route("/picture/<int:id>", methods=["GET"])
 def get_picture_by_id(id):
-    pass
+    for url in data:
+        if url['id'] == id:
+            return jsonify(url),200
+    return "id not found",404
 
 
 ######################################################################
@@ -52,7 +57,15 @@ def get_picture_by_id(id):
 ######################################################################
 @app.route("/picture", methods=["POST"])
 def create_picture():
-    pass
+    picture = request.get_json()
+    picture_id = picture['id']
+
+    for url in data:
+        if url['id'] == picture_id:
+            return {"Message": f"picture with id {picture_id} already present"}, 302
+    data.append(picture)
+    return jsonify(picture), 201
+
 
 ######################################################################
 # UPDATE A PICTURE
@@ -61,11 +74,21 @@ def create_picture():
 
 @app.route("/picture/<int:id>", methods=["PUT"])
 def update_picture(id):
-    pass
+    picture=request.get_json()
+    picture_id=picture['id']
+    for i,url in enumerate(data):
+        if url['id']==picture_id:
+            data[i]=picture
+            return jsonify(picture),200
+    return {"message": "picture not found"},404
 
 ######################################################################
 # DELETE A PICTURE
 ######################################################################
 @app.route("/picture/<int:id>", methods=["DELETE"])
 def delete_picture(id):
-    pass
+    for url in data:
+        if url['id']==id:
+            data.remove(url)
+            return "",204
+    return {"message": "picture not found"},404
